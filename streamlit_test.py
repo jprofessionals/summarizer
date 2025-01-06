@@ -6,17 +6,10 @@ import streamlit as st
 from openai import OpenAI
 import os
 
-
-
 from PyPDF2 import PdfReader
 import docx
 from dotenv import load_dotenv
-print(1)
-print(os.getcwd())
-print(1)
-
-from jpro_language_models.summarizers.sumymodule import sumy_summarizer
-from jpro_language_models import document_utils
+from summarizer import document_utils
 
 # Load environment variables from .env file
 load_dotenv()
