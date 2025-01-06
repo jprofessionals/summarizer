@@ -1,0 +1,24 @@
+name: Pip Audit in Docker
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Build and run the Docker container
+      - name: Build Docker container
+        run: |
+          docker build -t pip-audit-container .
+
+      - name: Run pip audit
+        run: |
+          docker run --rm pip-audit-container sh -c "pip install pip-audit && pip-audit"

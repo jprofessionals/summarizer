@@ -1,0 +1,82 @@
+repos:
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.8.2
+    hooks:
+      # Run the linter.
+      - id: ruff
+        types_or: [ python, pyi, jupyter ]
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [ python, pyi, jupyter ]
+
+  # # Black for code formatting
+  # - repo: https://github.com/psf/black
+  #   rev: 24.10.0  # Use the latest version
+  #   hooks:
+  #     - id: black
+
+  # # isort for import sorting
+  # - repo: https://github.com/PyCQA/isort
+  #   rev: 5.13.2
+  #   hooks:
+  #     - id: isort
+  #       args: ["--profile", "black", "--filter-files"]
+
+  # # Flake8 for linting
+  # - repo: https://github.com/pycqa/flake8
+  #   rev: 7.1.1
+  #   hooks:
+  #     - id: flake8
+
+  # - repo: https://github.com/PyCQA/pylint
+  #   rev: v3.3.2
+  #   hooks:
+  #     - id: pylint
+
+
+  # # Bandit for security checks
+  # - repo: https://github.com/PyCQA/bandit
+  #   rev: 1.8.0
+  #   hooks:
+  #     - id: bandit
+
+  # Detect-secrets for finding secrets in the codebase
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+
+  # # pip-audit for dependency vulnerability scanning
+  # - repo: https://github.com/pypa/pip-audit
+  #   rev: v2.7.3
+  #   hooks:
+  #     - id: pip-audit
+
+ # mypy for type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.4.1
+    hooks:
+      - id: mypy
+
+  # # Vulture for identifying unused code
+  # - repo: https://github.com/jendrikseipp/vulture
+  #   rev: v2.14
+  #   hooks:
+  #     - id: vulture
+
+  # - repo: https://github.com/prettier/prettier
+  #   rev: 3.4.2
+  #   hooks:
+  #     - id: prettier
+
+  # Pre-commit-hooks for general housekeeping
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace        # Removes trailing whitespace
+      - id: end-of-file-fixer          # Ensures file ends with a newline
+      - id: check-added-large-files    # Prevents committing large files
+      - id: check-merge-conflict       # Detects merge conflict markers
