@@ -6,8 +6,6 @@ import streamlit as st
 from openai import OpenAI
 import os
 
-from PyPDF2 import PdfReader
-import docx
 from dotenv import load_dotenv
 from summarizer import document_utils
 
@@ -22,6 +20,7 @@ client = OpenAI(
 # openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # %%
+
 
 def summarize_text_with_openai(text, max_tokens=500):
     # prompt = f"Please summarize the following job listing:\n\n{text}"

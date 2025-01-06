@@ -1,3 +1,7 @@
+from PyPDF2 import PdfReader
+import docx
+
+
 def extract_text_from_txt(txt_file):
     # For TXT files
     text = txt_file.read().decode("utf-8")
