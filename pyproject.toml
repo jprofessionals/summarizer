@@ -33,7 +33,7 @@ build-backend = "hatchling.build"
 [tool.rye]
 managed = true
 dev-dependencies = []
-virtual = false
+virtual = true
 
 [tool.hatch.metadata]
 allow-direct-references = true

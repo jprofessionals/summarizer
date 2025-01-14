@@ -9,7 +9,6 @@
 #   generate-hashes: false
 #   universal: false
 
--e file:.
 absl-py==2.1.0
     # via keras
     # via tensorboard
@@ -102,7 +101,6 @@ idna==3.10
 iniconfig==2.0.0
     # via pytest
 ipykernel==6.29.5
-    # via summarizer
 ipython==8.31.0
     # via ipykernel
 jedi==0.19.2
@@ -131,7 +129,6 @@ lxml==5.3.0
     # via breadability
     # via lxml-html-clean
     # via python-docx
-    # via summarizer
 lxml-html-clean==0.4.1
     # via lxml
 markdown==3.7
@@ -170,7 +167,6 @@ numpy==2.0.2
     # via tensorflow
     # via transformers
 openai==1.59.3
-    # via summarizer
 opt-einsum==3.4.0
     # via tensorflow
 optree==0.13.1
@@ -187,7 +183,6 @@ packaging==24.2
     # via transformers
 pandas==2.2.3
     # via streamlit
-    # via summarizer
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
@@ -195,14 +190,12 @@ pexpect==4.9.0
 pillow==11.1.0
     # via streamlit
 pip==24.3.1
-    # via summarizer
 platformdirs==4.3.6
     # via jupyter-core
     # via virtualenv
 pluggy==1.5.0
     # via pytest
 pre-commit==4.0.1
-    # via summarizer
 prompt-toolkit==3.0.48
     # via ipython
 protobuf==5.29.2
@@ -229,16 +222,12 @@ pygments==2.19.0
     # via ipython
     # via rich
 pypdf2==3.0.1
-    # via summarizer
 pytest==8.3.4
-    # via summarizer
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via pandas
 python-docx==1.1.2
-    # via summarizer
 python-dotenv==1.0.1
-    # via summarizer
 pytz==2024.2
     # via pandas
 pyyaml==6.0.2
@@ -269,7 +258,6 @@ rpds-py==0.22.3
 safetensors==0.5.0
     # via transformers
 setuptools==75.7.0
-    # via summarizer
     # via tensorboard
     # via tensorflow
 six==1.17.0
@@ -286,9 +274,7 @@ sniffio==1.3.1
 stack-data==0.6.3
     # via ipython
 streamlit==1.41.1
-    # via summarizer
 sumy==0.11.0
-    # via summarizer
 tenacity==9.0.0
     # via streamlit
 tensorboard==2.18.0
@@ -296,12 +282,10 @@ tensorboard==2.18.0
 tensorboard-data-server==0.7.2
     # via tensorboard
 tensorflow==2.18.0
-    # via summarizer
     # via tf-keras
 termcolor==2.5.0
     # via tensorflow
 tf-keras==2.18.0
-    # via summarizer
 tokenizers==0.21.0
     # via transformers
 toml==0.10.2
@@ -323,7 +307,6 @@ traitlets==5.14.3
     # via jupyter-core
     # via matplotlib-inline
 transformers==4.47.1
-    # via summarizer
 typing-extensions==4.12.2
     # via altair
     # via anyio
