@@ -11,6 +11,9 @@
   // ],
   "forwardPorts": [3000],
   "mounts": [
+    // "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind",
+    // "source=/usr/bin/git,target=/usr/bin/git,type=bind",
+    // "source=/usr/lib/git-core,target=/usr/lib/git-core,type=bind",
     "source=${localWorkspaceFolder},target=/workspace,type=bind"
   ],
   "customizations": {
