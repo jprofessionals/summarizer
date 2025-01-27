@@ -69,7 +69,8 @@ def main() -> None:
                 requirements_text = document_utils.extract_text_from_docx(requirements_file)
 
                 # Convert requirements text to dictionary
-                requirements = parse_requirements_text(requirements_text)
+                # requirements = parse_requirements_text(requirements_text)
+                requirements = requirements_text
 
                 with st.spinner("Filling requirements matrix..."):
                     filled_matrix = matrices.fill_requirements_matrix_with_openai(

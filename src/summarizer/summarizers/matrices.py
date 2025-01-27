@@ -27,7 +27,7 @@ client = OpenAI(
 
 def fill_requirements_matrix_with_openai(
         cv: str,
-        requirements: dict,
+        requirements: str,
         system_prompt: str = dict_roles["system"],
         user_prompt: str = dict_roles["user"],
         max_tokens: int = 2000) -> dict:
@@ -44,7 +44,8 @@ def fill_requirements_matrix_with_openai(
     """
     try:
         # Format requirements into a readable prompt
-        requirements_text = "\n".join([f"{key}: {value}" for key, value in requirements.items()])
+        # requirements_text = "\n".join([f"{key}: {value}" for key, value in requirements.items()])
+        requirements_text = requirements
 
         # Create the OpenAI chat input
         response = client.chat.completions.create(
