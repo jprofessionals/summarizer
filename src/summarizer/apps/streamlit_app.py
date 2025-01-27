@@ -35,17 +35,23 @@ def main() -> None:
     if uploaded_files:
         all_text = ""
         for uploaded_file in uploaded_files:
-            if uploaded_file.type == "application/pdf":
-                text = document_utils.extract_text_from_pdf(uploaded_file)
-            elif uploaded_file.type == "text/plain":
-                text = document_utils.extract_text_from_txt(uploaded_file)
-            elif (
-                uploaded_file.type
-                == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            ):
-                text = document_utils.extract_text_from_docx(uploaded_file)
-            
-            all_text += text + "\n"
+            try:
+                if uploaded_file.type == "application/pdf":
+                    text = document_utils.extract_text_from_pdf(uploaded_file)
+                elif uploaded_file.type == "text/plain":
+                    text = document_utils.extract_text_from_txt(uploaded_file)
+                elif (
+                    uploaded_file.type
+                    == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                ):
+                    text = document_utils.extract_text_from_docx(uploaded_file)
+                else:
+                    st.error(f"Unsupported file type: {uploaded_file.type}")
+                    continue
+
+                all_text += text + "\n"
+            except Exception as e:
+                st.error(f"Error extracting text from file {uploaded_file.name}: {e}")
 
         if all_text:
             st.subheader("Extracted Text:")
@@ -53,13 +59,14 @@ def main() -> None:
 
             if st.button("Summarize"):
                 with st.spinner("Generating summary..."):
-                    summary = openai_utils.summarize_text_with_openai(all_text, system_prompt, user_prompt)
-                st.subheader("Summary:")
-                st.write(summary)
+                    try:
+                        summary = openai_utils.summarize_text_with_openai(all_text, system_prompt, user_prompt)
+                        st.subheader("Summary:")
+                        st.write(summary)
+                    except Exception as e:
+                        st.error(f"Error generating summary: {e}")
         else:
-            st.error(
-                "Unable to extract text from the documents. Please try other files."
-            )
+            st.error("Unable to extract text from the documents. Please try other files.")
 
 if __name__ == "__main__":
     main()
