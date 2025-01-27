@@ -26,34 +26,39 @@ def main() -> None:
     )
 
     # File upload
-    uploaded_file = st.file_uploader(
-        "Upload a job listing document (PDF or DOCX or TXT)",
+    uploaded_files = st.file_uploader(
+        "Upload job listing documents (PDF, DOCX, or TXT)",
         type=["pdf", "docx", "txt"],
+        accept_multiple_files=True
     )
 
-    if uploaded_file is not None:
-        if uploaded_file.type == "application/pdf":
-            text = document_utils.extract_text_from_pdf(uploaded_file)
-        elif uploaded_file.type == "text/plain":
-            text = document_utils.extract_text_from_txt(uploaded_file)
-        elif (
-            uploaded_file.type
-            == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ):
-            text = document_utils.extract_text_from_docx(uploaded_file)
+    if uploaded_files:
+        all_text = ""
+        for uploaded_file in uploaded_files:
+            if uploaded_file.type == "application/pdf":
+                text = document_utils.extract_text_from_pdf(uploaded_file)
+            elif uploaded_file.type == "text/plain":
+                text = document_utils.extract_text_from_txt(uploaded_file)
+            elif (
+                uploaded_file.type
+                == "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ):
+                text = document_utils.extract_text_from_docx(uploaded_file)
+            
+            all_text += text + "\n"
 
-        if text:
+        if all_text:
             st.subheader("Extracted Text:")
-            st.text_area("Job Listing Text", value=text, height=300)
+            st.text_area("Job Listing Text", value=all_text, height=300)
 
             if st.button("Summarize"):
                 with st.spinner("Generating summary..."):
-                    summary = openai_utils.summarize_text_with_openai(text, system_prompt, user_prompt)
+                    summary = openai_utils.summarize_text_with_openai(all_text, system_prompt, user_prompt)
                 st.subheader("Summary:")
                 st.write(summary)
         else:
             st.error(
-                "Unable to extract text from the document. Please try another file."
+                "Unable to extract text from the documents. Please try other files."
             )
 
 if __name__ == "__main__":
