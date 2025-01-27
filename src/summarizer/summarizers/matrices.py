@@ -48,7 +48,8 @@ def fill_requirements_matrix_with_openai(
 
         # Create the OpenAI chat input
         response = client.chat.completions.create(
-            model="gpt-4",
+            # model="gpt-4",
+            model="o1",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"{user_prompt}CV:\n\n{cv}\n\nKravmatrise:\n\n{requirements_text}"}

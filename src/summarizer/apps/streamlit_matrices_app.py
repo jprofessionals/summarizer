@@ -79,7 +79,8 @@ def main() -> None:
                         user_prompt=user_prompt
                     )
                 st.subheader("Filled Requirements Matrix:")
-                st.json(filled_matrix)
+                st.text_area("Suggested text", value=filled_matrix, height=300)
+                # st.json(filled_matrix)
             except Exception as e:
                 st.error(f"Error filling requirements matrix: {e}")
         else:
