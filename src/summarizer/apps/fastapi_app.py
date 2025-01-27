@@ -5,12 +5,26 @@ from summarizer import document_utils, openai_utils
 
 app = FastAPI()
 
-@app.post("/summarize/")
-async def summarize_files(
-    files: List[UploadFile] = File(...),
-    system_prompt: str = openai_utils.dict_roles["system"], # We don't expect the user to provide the system prompt
-    user_prompt: str = openai_utils.dict_roles["user"] # We don't expect the user to provide the user prompt
-):
+@app.get("/")
+def read_root():
+    return {"Reponse": "Hello from the Summarizer API!"}
+
+@app.get("/health")
+async def health_check():
+    """
+    Health check endpoint to verify that the API is running.
+    """
+    return JSONResponse(content={"status": "ok"})
+
+
+def handle_text_extraction_from_files(files: List[UploadFile]) -> str:
+    """
+    Extracts text from the uploaded files.
+    Args:
+        files (List[UploadFile]): The uploaded files.
+    Returns:
+        str: The extracted text from the files.
+    """
     all_text = ""
     for uploaded_file in files:
         try:
@@ -27,8 +41,19 @@ async def summarize_files(
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error extracting text from file {uploaded_file.filename}: {e}")
 
-    if not all_text:
-        raise HTTPException(status_code=400, detail="No text extracted from the documents.")
+        if not all_text:
+            raise HTTPException(status_code=400, detail="No text extracted from the documents.")
+    return all_text
+
+
+@app.post("/summarize/")
+async def summarize_files(
+    files: List[UploadFile] = File(...),
+    system_prompt: str = openai_utils.dict_roles["system"],
+    user_prompt: str = openai_utils.dict_roles["user"]
+):
+
+    all_text = handle_text_extraction_from_files(files) 
 
     try:
         summary = openai_utils.summarize_text_with_openai(all_text, system_prompt, user_prompt)
