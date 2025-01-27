@@ -1,5 +1,5 @@
 import streamlit as st
-from summarizer import document_utils, openai_summarizer
+from summarizer import document_utils, summarizer_joblistings
 
 def main() -> None:
     """
@@ -15,13 +15,13 @@ def main() -> None:
     # Text input for system and user prompts
     system_prompt = st.text_area(
         "System Prompt",
-        value=openai_summarizer.dict_roles["system"],
+        value=summarizer_joblistings.dict_roles["system"],
         height=150
     )
 
     user_prompt = st.text_area(
         "User Prompt",
-        value=openai_summarizer.dict_roles["user"],
+        value=summarizer_joblistings.dict_roles["user"],
         height=150
     )
 
@@ -60,7 +60,7 @@ def main() -> None:
             if st.button("Summarize"):
                 with st.spinner("Generating summary..."):
                     try:
-                        summary = openai_summarizer.summarize_text_with_openai(all_text, system_prompt, user_prompt)
+                        summary = summarizer_joblistings.summarize_text_with_openai(all_text, system_prompt, user_prompt)
                         st.subheader("Summary:")
                         st.write(summary)
                     except Exception as e:
