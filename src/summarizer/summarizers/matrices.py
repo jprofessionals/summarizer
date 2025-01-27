@@ -15,7 +15,7 @@ dict_roles = {
     ),
     "user": (
         "Basert på CV-en nedenfor og kravmatrisen som følger, analyser hvor godt konsulenten oppfyller hvert krav. "
-        "For hvert punkt i matrisen, beskriv relevante erfaringer, prosjekter og resultater som støtter opp om kompetansen. "
+        "For hvert punkt i matrisen gi en beskrivelse av hvor godt konsulenten oppfyller dette kravet, prosjekter og resultater som støtter opp om kompetansen. "
         "\n\n"
     )
 }
