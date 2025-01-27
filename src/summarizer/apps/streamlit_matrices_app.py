@@ -1,4 +1,5 @@
 import streamlit as st
+from summarizer import document_utils
 from summarizer.summarizers import matrices
 
 def main() -> None:
@@ -25,32 +26,43 @@ def main() -> None:
         height=150
     )
 
-    # Text input for CV
-    cv_text = st.text_area(
-        "Consultant's CV",
-        height=300
+    # File upload for CV (PDF)
+    cv_file = st.file_uploader(
+        "Upload Consultant's CV (PDF)",
+        type=["pdf"]
     )
 
-    # Text input for requirements matrix
-    requirements_text = st.text_area(
-        "Requirements Matrix (in JSON format)",
-        height=300
+    # File upload for requirements matrix (DOCX)
+    requirements_file = st.file_uploader(
+        "Upload Requirements Matrix (DOCX)",
+        type=["docx"]
     )
 
     if st.button("Fill Requirements Matrix"):
-        try:
-            requirements = eval(requirements_text)  # Convert the input text to a dictionary
-            with st.spinner("Filling requirements matrix..."):
-                filled_matrix = matrices.fill_requirements_matrix_with_openai(
-                    cv=cv_text,
-                    requirements=requirements,
-                    system_prompt=system_prompt,
-                    user_prompt=user_prompt
-                )
-            st.subheader("Filled Requirements Matrix:")
-            st.json(filled_matrix)
-        except Exception as e:
-            st.error(f"Error filling requirements matrix: {e}")
+        if cv_file and requirements_file:
+            try:
+                # Extract text from CV PDF
+                cv_text = document_utils.extract_text_from_pdf(cv_file)
+
+                # Extract text from requirements DOCX
+                requirements_text = document_utils.extract_text_from_docx(requirements_file)
+
+                # Convert requirements text to dictionary
+                requirements = eval(requirements_text)
+
+                with st.spinner("Filling requirements matrix..."):
+                    filled_matrix = matrices.fill_requirements_matrix_with_openai(
+                        cv=cv_text,
+                        requirements=requirements,
+                        system_prompt=system_prompt,
+                        user_prompt=user_prompt
+                    )
+                st.subheader("Filled Requirements Matrix:")
+                st.json(filled_matrix)
+            except Exception as e:
+                st.error(f"Error filling requirements matrix: {e}")
+        else:
+            st.error("Please upload both the CV and the requirements matrix files.")
 
 if __name__ == "__main__":
     main()
