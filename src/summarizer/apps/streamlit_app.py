@@ -1,5 +1,4 @@
 import streamlit as st
-
 from summarizer import document_utils, openai_utils
 
 def main() -> None:
@@ -9,10 +8,22 @@ def main() -> None:
     st.set_page_config(
         page_title="Job Listing Summarizer", 
         # layout="wide"
-        )
-
+    )
 
     st.title("Job Listing Summarizer")
+
+    # Text input for system and user prompts
+    system_prompt = st.text_area(
+        "System Prompt",
+        value=openai_utils.dict_roles["system"],
+        height=150
+    )
+
+    user_prompt = st.text_area(
+        "User Prompt",
+        value=openai_utils.dict_roles["user"],
+        height=150
+    )
 
     # File upload
     uploaded_file = st.file_uploader(
@@ -37,7 +48,7 @@ def main() -> None:
 
             if st.button("Summarize"):
                 with st.spinner("Generating summary..."):
-                    summary = openai_utils.summarize_text_with_openai(text)
+                    summary = openai_utils.summarize_text_with_openai(text, system_prompt, user_prompt)
                 st.subheader("Summary:")
                 st.write(summary)
         else:
@@ -45,10 +56,8 @@ def main() -> None:
                 "Unable to extract text from the document. Please try another file."
             )
 
-
 if __name__ == "__main__":
     main()
 
 # streamlit run src/summarizer/apps/streamlit_app.py 
 # streamlit run src/summarizer/apps/streamlit_app.py --reload
-
