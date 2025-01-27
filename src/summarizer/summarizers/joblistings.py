@@ -22,7 +22,7 @@ dict_roles = {
     )
     }
 
-# Retrieve the API key
+# Intialize the OpenAI client
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
