@@ -7,19 +7,19 @@ load_dotenv()
 
 # The roles for the OpenAI chat API
 dict_roles = {
-                    "system": (
-                        "Du er en hjelpsom assistent spesialisert i å oppsummere jobbutlysninger for utviklere i et konsulentselskap. "
-                        "Oppsummeringene dine skal være korte, strukturerte og rettet mot utviklere. "
-                        "List opp teknologier, programmeringsspråk, rammeverk, verktøy og andre viktige krav "
-                        "som punktlister der det er mulig. Start med en punktliste med kort beskrivelse av rolle, arbeidsgiver og lokasjon."
-                    ),
-                    "user": (
-                        "Oppsummer følgende jobbannonse for å gjøre det enklere for en utvikler å vurdere om deres kompetanse "
-                        "passer til kravene. Fokuser på å tydelig liste opp teknologier, programmeringsspråk, rammeverk "
-                        "og verktøy som kreves for rollen, samt en kort beskrivelse av arbeidsoppgavene og "
-                        "viktige høydepunkter slik at utviklerene kan vurdere om utlysningen virker interessant."
-                        "Jobb annonsen: \n\n"
-                    )
+    "system": (
+        "Du er en hjelpsom assistent spesialisert i å oppsummere jobbutlysninger for utviklere i et konsulentselskap. "
+        "Oppsummeringene dine skal være korte, strukturerte og rettet mot utviklere. "
+        "List opp teknologier, programmeringsspråk, rammeverk, verktøy og andre viktige krav "
+        "som punktlister der det er mulig. Start med en punktliste med kort beskrivelse av rolle, arbeidsgiver og lokasjon."
+    ),
+    "user": (
+        "Oppsummer følgende jobbannonse for å gjøre det enklere for en utvikler å vurdere om deres kompetanse "
+        "passer til kravene. Fokuser på å tydelig liste opp teknologier, programmeringsspråk, rammeverk "
+        "og verktøy som kreves for rollen, samt en kort beskrivelse av arbeidsoppgavene og "
+        "viktige høydepunkter slik at utviklerene kan vurdere om utlysningen virker interessant."
+        "Jobb annonsen: \n\n"
+    )
     }
 
 # Retrieve the API key
@@ -27,7 +27,11 @@ client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
-def summarize_text_with_openai(text: str, max_tokens: int = 700) -> str:
+def summarize_text_with_openai(
+        text: str, 
+        system_prompt: str = dict_roles["system"], 
+        user_prompt: str = dict_roles["user"], 
+        max_tokens: int = 700) -> str:
     """
     Summarizes a given text using OpenAI's GPT-4 API.
 
@@ -44,7 +48,7 @@ def summarize_text_with_openai(text: str, max_tokens: int = 700) -> str:
             messages=[
                 {
                     "role": "system",
-                    "content": dict_roles["system"],
+                    "content": system_prompt,
                     # "content": (
                     #     "Du er en hjelpsom assistent spesialisert i å oppsummere jobbutlysninger for utviklere i et konsulentselskap. "
                     #     "Oppsummeringene dine skal være korte, strukturerte og rettet mot utviklere. "
@@ -54,7 +58,7 @@ def summarize_text_with_openai(text: str, max_tokens: int = 700) -> str:
                 },
                 {
                     "role": "user",
-                    "content": dict_roles["user"] + text,
+                    "content": user_prompt + text,
                     # "content": (
                     #     "Oppsummer følgende jobbannonse for å gjøre det enklere for en utvikler å vurdere om deres kompetanse "
                     #     "passer til kravene. Fokuser på å tydelig liste opp teknologier, programmeringsspråk, rammeverk "
