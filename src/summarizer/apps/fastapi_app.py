@@ -1,7 +1,8 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from typing import List
-from summarizer import document_utils, summarizer_joblistings
+from summarizer import document_utils
+from summarizer.summarizers import joblistings
 
 app = FastAPI()
 
@@ -53,8 +54,8 @@ def handle_text_extraction_from_files(files: List[UploadFile]) -> str:
 @app.post("/summarize/")
 async def summarize_files(
     files: List[UploadFile] = File(...),
-    system_prompt: str = summarizer_joblistings.dict_roles["system"],
-    user_prompt: str = summarizer_joblistings.dict_roles["user"]
+    system_prompt: str = joblistings.dict_roles["system"],
+    user_prompt: str = joblistings.dict_roles["user"]
 ) -> JSONResponse:
     """
     Endpoint to summarize the text extracted from the uploaded files.
@@ -70,7 +71,7 @@ async def summarize_files(
     all_text = handle_text_extraction_from_files(files)
 
     try:
-        summary = summarizer_joblistings.summarize_text_with_openai(all_text, system_prompt, user_prompt)
+        summary = joblistings.summarize_text_with_openai(all_text, system_prompt, user_prompt)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating summary: {e}")
 
