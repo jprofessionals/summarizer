@@ -6,22 +6,26 @@ from summarizer import document_utils, openai_utils
 app = FastAPI()
 
 @app.get("/")
-def read_root():
-    return {"Reponse": "Hello from the Summarizer API!"}
+def read_root() -> dict:
+    """
+    Root endpoint to verify that the API is running.
+    """
+    return {"Response": "Hello from the Summarizer API!"}
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> JSONResponse:
     """
     Health check endpoint to verify that the API is running.
     """
     return JSONResponse(content={"status": "ok"})
 
-
 def handle_text_extraction_from_files(files: List[UploadFile]) -> str:
     """
     Extracts text from the uploaded files.
+
     Args:
         files (List[UploadFile]): The uploaded files.
+
     Returns:
         str: The extracted text from the files.
     """
@@ -41,19 +45,29 @@ def handle_text_extraction_from_files(files: List[UploadFile]) -> str:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error extracting text from file {uploaded_file.filename}: {e}")
 
-        if not all_text:
-            raise HTTPException(status_code=400, detail="No text extracted from the documents.")
+    if not all_text:
+        raise HTTPException(status_code=400, detail="No text extracted from the documents.")
+    
     return all_text
-
 
 @app.post("/summarize/")
 async def summarize_files(
     files: List[UploadFile] = File(...),
     system_prompt: str = openai_utils.dict_roles["system"],
     user_prompt: str = openai_utils.dict_roles["user"]
-):
+) -> JSONResponse:
+    """
+    Endpoint to summarize the text extracted from the uploaded files.
 
-    all_text = handle_text_extraction_from_files(files) 
+    Args:
+        files (List[UploadFile]): The uploaded files.
+        system_prompt (str): The system prompt for the OpenAI API.
+        user_prompt (str): The user prompt for the OpenAI API.
+
+    Returns:
+        JSONResponse: The summary of the text.
+    """
+    all_text = handle_text_extraction_from_files(files)
 
     try:
         summary = openai_utils.summarize_text_with_openai(all_text, system_prompt, user_prompt)
