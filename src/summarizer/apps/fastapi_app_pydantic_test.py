@@ -2,13 +2,13 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
-from summarizer import document_utils, openai_utils
+from summarizer import document_utils, openai_summarizer
 
 app = FastAPI()
 
 class SummarizeRequest(BaseModel):
-    system_prompt: str = openai_utils.dict_roles["system"]
-    user_prompt: str = openai_utils.dict_roles["user"]
+    system_prompt: str = openai_summarizer.dict_roles["system"]
+    user_prompt: str = openai_summarizer.dict_roles["user"]
 
 class SummarizeResponse(BaseModel):
     summary: str
@@ -76,7 +76,7 @@ async def summarize_files(
     all_text = handle_text_extraction_from_files(files)
 
     try:
-        summary = openai_utils.summarize_text_with_openai(all_text, request.system_prompt, request.user_prompt)
+        summary = openai_summarizer.summarize_text_with_openai(all_text, request.system_prompt, request.user_prompt)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating summary: {e}")
 
