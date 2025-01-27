@@ -32,8 +32,8 @@ def summarize_text_with_openai(text, max_tokens=500):
     #     temperature=0.7,
     # )
     response = client.chat.completions.create(
-        # model="gpt-4",  #
-        model="o1",  #
+        model="gpt-4",  #
+        # model="o1",  #
         # TODO: Make system/user message more specific to specific to summarization of developer skill requirements?
         # messages=[
         #     {
@@ -48,26 +48,51 @@ def summarize_text_with_openai(text, max_tokens=500):
         #     },
         # ],
         messages=[
+            # {
+            #     "role": "system",
+            #     # "content": (
+            #     #     "You are a helpful assistant specialized in summarizing job listings for developers. "
+            #     #     "Your summaries should be concise, structured, and tailored for programmers. "
+            #     #     "List technologies, programming languages, frameworks, tools, and other key requirements "
+            #     #     "as bullet points whenever possible."
+            #     # ),
+            #     "content": (
+            #         "You are a helpful assistant specialized in summarizing job listings for developers. "
+            #         "Your summaries should be concise, structured, and tailored for programmers. "
+            #         "List technologies, programming languages, frameworks, tools, and other key requirements "
+            #         "as bullet points whenever possible."
+            #     ),
+            # },
+            # {
+            #     "role": "user",
+            #     "content": (
+            #         f"Summarize the following job listing to make it easier for a developer to determine if their skills "
+            #         f"match the requirements. Focus on clearly listing the technologies, programming languages, frameworks, "
+            #         f"and tools required for the role, as well as a brief description of the job responsibilities and "
+            #         f"highlights:\n\n{text}"
+            #     ),
+            # },
             {
-                "role": "system",
-                "content": (
-                    "You are a helpful assistant specialized in summarizing job listings for developers. "
-                    "Your summaries should be concise, structured, and tailored for programmers. "
-                    "List technologies, programming languages, frameworks, tools, and other key requirements "
-                    "as bullet points whenever possible."
-                ),
+            "role": "system",
+            "content": (
+                "Du er en hjelpsom assistent spesialisert i å oppsummere jobbannonser for utviklere. "
+                "Oppsummeringene dine skal være korte, strukturerte og rettet mot utviklere. "
+                "List opp teknologier, programmeringsspråk, rammeverk, verktøy og andre viktige krav "
+                "som punktlister der det er mulig."
+            )
             },
             {
-                "role": "user",
-                "content": (
-                    f"Summarize the following job listing to make it easier for a developer to determine if their skills "
-                    f"match the requirements. Focus on clearly listing the technologies, programming languages, frameworks, "
-                    f"and tools required for the role, as well as a brief description of the job responsibilities and "
-                    f"highlights:\n\n{text}"
-                ),
+            "role": "user",
+            "content": (
+                "Oppsummer følgende jobbannonse for å gjøre det enklere for en utvikler å vurdere om deres kompetanse "
+                "passer til kravene. Fokuser på å tydelig liste opp teknologier, programmeringsspråk, rammeverk "
+                "og verktøy som kreves for rollen, samt en kort beskrivelse av arbeidsoppgavene og "
+                f"viktige høydepunkter slik at utviklerene kan vurdere om utlysningen virker interessant:\n\n{text}"
+            )
             },
         ],
-        max_tokens=max_tokens,
+        # max_tokens=max_tokens,
+        max_completion_tokens=max_tokens,
         temperature=0.5,  # Adjust temperature for more/less creativity
     )
     summary = response.choices[0].message.content
@@ -115,3 +140,5 @@ if __name__ == "__main__":
 
 
 # streamlit run job_listing_summarizer.py --reload
+# rye run streamlit run streamlit_test.py
+
