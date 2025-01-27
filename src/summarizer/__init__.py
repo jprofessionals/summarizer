@@ -1,2 +1,2 @@
-def hello() -> str:
-    return "Hello from jpro-language-models!"
+def main() -> None:
+    print("Hello from summarizer!")

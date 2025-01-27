@@ -1,0 +1,13 @@
+FROM python:3.12.7-slim
+
+RUN pip install uv
+
+WORKDIR /app
+
+# CMD python -m summarizer
+COPY pyproject.toml .
+RUN uv venv
+RUN uv pip install -r pyproject.toml
+COPY . .
+# RUN uv venv
+RUN uv pip install -e .

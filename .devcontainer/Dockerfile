@@ -4,8 +4,5 @@ RUN pip install uv
 # RUN uv venv --python 3.12.7
 
 WORKDIR /app
-COPY requirements.lock ./
-RUN uv pip install --no-cache --system -r requirements.lock
-
-COPY src .
-# CMD ["python", "main.py"]
+RUN --mount=source=dist,target=/dist uv pip install --no-cache /dist/*.whl
+CMD python -m summarizer
