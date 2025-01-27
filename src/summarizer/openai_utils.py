@@ -17,7 +17,7 @@ dict_roles = {
         "Oppsummer følgende jobbannonse for å gjøre det enklere for en utvikler å vurdere om deres kompetanse "
         "passer til kravene. Fokuser på å tydelig liste opp teknologier, programmeringsspråk, rammeverk "
         "og verktøy som kreves for rollen, samt en kort beskrivelse av arbeidsoppgavene og "
-        "viktige høydepunkter slik at utviklerene kan vurdere om utlysningen virker interessant."
+        "viktige høydepunkter slik at utviklerene kan vurdere om utlysningen virker interessant. "
         "Jobb annonsen: \n\n"
     )
     }

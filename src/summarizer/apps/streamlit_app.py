@@ -71,5 +71,5 @@ def main() -> None:
 if __name__ == "__main__":
     main()
 
-# streamlit run src/summarizer/apps/streamlit_app.py 
-# streamlit run src/summarizer/apps/streamlit_app.py --reload
+# To run the Streamlit app, use the following command:
+# streamlit run src/summarizer/apps/streamlit_app.py
