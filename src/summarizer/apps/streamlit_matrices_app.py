@@ -1,6 +1,27 @@
 import streamlit as st
+import json
 from summarizer import document_utils
 from summarizer.summarizers import matrices
+
+def parse_requirements_text(requirements_text: str) -> dict:
+    """
+    Parses the requirements text into a dictionary, skipping lines that cannot be converted.
+
+    Args:
+        requirements_text (str): The requirements text.
+
+    Returns:
+        dict: The parsed requirements dictionary.
+    """
+    requirements = {}
+    for line in requirements_text.splitlines():
+        try:
+            key, value = line.split(":", 1)
+            requirements[key.strip()] = value.strip()
+        except ValueError:
+            # Skip lines that cannot be split into key-value pairs
+            continue
+    return requirements
 
 def main() -> None:
     """
@@ -48,7 +69,7 @@ def main() -> None:
                 requirements_text = document_utils.extract_text_from_docx(requirements_file)
 
                 # Convert requirements text to dictionary
-                requirements = eval(requirements_text)
+                requirements = parse_requirements_text(requirements_text)
 
                 with st.spinner("Filling requirements matrix..."):
                     filled_matrix = matrices.fill_requirements_matrix_with_openai(
