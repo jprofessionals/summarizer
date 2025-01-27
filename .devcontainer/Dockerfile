@@ -33,6 +33,7 @@ ENTRYPOINT []
 # Uses `--host 0.0.0.0` to allow access from outside the container
 CMD ["python", "-c", "import summarizer; print(summarizer.main())"]
 
+
 # TODO: Setup FastAPI
 # # Run the FastAPI application by default
 # # Uses `fastapi dev` to enable hot-reloading when the `watch` sync occurs

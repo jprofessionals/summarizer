@@ -123,7 +123,8 @@ jupyter-client==8.6.3
 jupyter-core==5.7.2
     # via ipykernel
     # via jupyter-client
-keras==3.7.0
+keras==3.8.0
+    # via summarizer
     # via tensorflow
 libclang==18.1.1
     # via tensorflow

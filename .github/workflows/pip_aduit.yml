@@ -3,7 +3,7 @@ name: Pip Audit in Docker
 on:
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   pip-audit:
