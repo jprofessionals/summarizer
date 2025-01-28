@@ -82,7 +82,7 @@ def main() -> None:
         type=["docx"]
     )
 
-    if st.button("Fill Requirements Matrix"):
+    if st.button("Extract Requirements"):
         if cv_file and requirements_file:
             try:
                 # Extract text from CV PDF
@@ -102,28 +102,37 @@ def main() -> None:
                     height=300
                 )
 
-                if st.button("Confirm and Fill Requirements Matrix"):
-                    # Convert confirmed/modified requirements to a list
-                    confirmed_requirements = requirements_input.splitlines()
+                # Store the extracted requirements and CV text in session state
+                st.session_state["cv_text"] = cv_text
+                st.session_state["requirements_input"] = requirements_input
 
-                    filled_matrix = {}
-                    with st.spinner("Filling requirements matrix..."):
-                        for requirement in confirmed_requirements:
-                            if requirement.strip():
-                                filled_response = matrices.fill_requirement_with_openai(
-                                    cv=cv_text,
-                                    requirement=requirement,
-                                    system_prompt=system_prompt,
-                                    user_prompt=user_prompt
-                                )
-                                filled_matrix[requirement] = filled_response
-
-                    st.subheader("Filled Requirements Matrix:")
-                    st.json(filled_matrix)
             except Exception as e:
-                st.error(f"Error filling requirements matrix: {e}")
+                st.error(f"Error extracting requirements: {e}")
         else:
             st.error("Please upload both the CV and the requirements matrix files.")
+
+    if "requirements_input" in st.session_state and st.button("Confirm and Fill Requirements Matrix"):
+        try:
+            # Convert confirmed/modified requirements to a list
+            confirmed_requirements = st.session_state["requirements_input"].splitlines()
+            cv_text = st.session_state["cv_text"]
+
+            filled_matrix = {}
+            with st.spinner("Filling requirements matrix..."):
+                for requirement in confirmed_requirements:
+                    if requirement.strip():
+                        filled_response = matrices.fill_requirement_with_openai(
+                            cv=cv_text,
+                            requirement=requirement,
+                            system_prompt=system_prompt,
+                            user_prompt=user_prompt
+                        )
+                        filled_matrix[requirement] = filled_response
+
+            st.subheader("Filled Requirements Matrix:")
+            st.json(filled_matrix)
+        except Exception as e:
+            st.error(f"Error filling requirements matrix: {e}")
 
 if __name__ == "__main__":
     main()
