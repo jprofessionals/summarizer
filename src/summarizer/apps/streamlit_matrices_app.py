@@ -28,6 +28,24 @@ def extract_requirements_from_docx(docx_file) -> dict:
                     requirements[key].append(value)
     return requirements
 
+def format_requirements_for_display(requirements_dict: dict) -> str:
+    """
+    Formats the requirements dictionary for display, adding numbering for each line.
+
+    Args:
+        requirements_dict (dict): The dictionary of requirements.
+
+    Returns:
+        str: The formatted string of requirements.
+    """
+    formatted_requirements = []
+    counter = 1
+    for key, values in requirements_dict.items():
+        for value in values:
+            formatted_requirements.append(f"{counter}. {key}: {value}")
+            counter += 1
+    return "\n".join(formatted_requirements)
+
 def main() -> None:
     """
     Main function of the Streamlit app for filling out requirements matrices.
@@ -73,11 +91,14 @@ def main() -> None:
                 # Extract matrix-like data from requirements DOCX
                 requirements_dict = extract_requirements_from_docx(requirements_file)
 
+                # Format extracted requirements for display
+                formatted_requirements = format_requirements_for_display(requirements_dict)
+
                 # Display extracted requirements for user confirmation or modification
                 st.subheader("Extracted Requirements:")
                 requirements_input = st.text_area(
                     "Please confirm or modify the extracted requirements:",
-                    value="\n".join([f"{key}: {', '.join(values)}" for key, values in requirements_dict.items()]),
+                    value=formatted_requirements,
                     height=300
                 )
 
