@@ -3,7 +3,7 @@ from summarizer import document_utils
 from summarizer.summarizers import matrices
 import docx
 
-def extract_requirements_from_docx(docx_file) -> list:
+def extract_requirements_from_docx(docx_file) -> dict:
     """
     Extracts matrix-like data from the requirements DOCX file.
 
@@ -11,18 +11,21 @@ def extract_requirements_from_docx(docx_file) -> list:
         docx_file (file-like object): The DOCX file to extract requirements from.
 
     Returns:
-        list: A list of requirements extracted from the DOCX file.
+        dict: A dictionary of requirements extracted from the DOCX file.
     """
-    requirements = []
+    requirements = {}
     doc = docx.Document(docx_file)
     for table in doc.tables:
-        for row in table.rows:
+        headers = [cell.text.strip() for cell in table.rows[0].cells]
+        for row in table.rows[1:]:
             cells = row.cells
-            if len(cells) >= 2:
-                key = cells[0].text.strip()
-                value = cells[1].text.strip()
+            for i, header in enumerate(headers):
+                key = header
+                value = cells[i].text.strip()
                 if key and value:
-                    requirements.append(f"{key}: {value}")
+                    if key not in requirements:
+                        requirements[key] = []
+                    requirements[key].append(value)
     return requirements
 
 def main() -> None:
@@ -68,13 +71,13 @@ def main() -> None:
                 cv_text = document_utils.extract_text_from_pdf(cv_file)
 
                 # Extract matrix-like data from requirements DOCX
-                requirements = extract_requirements_from_docx(requirements_file)
+                requirements_dict = extract_requirements_from_docx(requirements_file)
 
                 # Display extracted requirements for user confirmation or modification
                 st.subheader("Extracted Requirements:")
                 requirements_input = st.text_area(
                     "Please confirm or modify the extracted requirements:",
-                    value="\n".join(requirements),
+                    value="\n".join([f"{key}: {', '.join(values)}" for key, values in requirements_dict.items()]),
                     height=300
                 )
 
