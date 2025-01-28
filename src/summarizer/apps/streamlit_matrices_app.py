@@ -82,11 +82,11 @@ def main() -> None:
         type=["docx"]
     )
 
+    formatted_requirements = ""
     if st.button("Extract Requirements"):
         if cv_file and requirements_file:
             try:
-                # Extract text from CV PDF
-                cv_text = document_utils.extract_text_from_pdf(cv_file)
+
 
                 # Extract matrix-like data from requirements DOCX
                 requirements_dict = extract_requirements_from_docx(requirements_file)
@@ -94,28 +94,35 @@ def main() -> None:
                 # Format extracted requirements for display
                 formatted_requirements = format_requirements_for_display(requirements_dict)
 
-                # Display extracted requirements for user confirmation or modification
-                st.subheader("Extracted Requirements:")
-                requirements_input = st.text_area(
-                    "Please confirm or modify the extracted requirements:",
-                    value=formatted_requirements,
-                    height=300
-                )
-
                 # Store the extracted requirements and CV text in session state
-                st.session_state["cv_text"] = cv_text
-                st.session_state["requirements_input"] = requirements_input
+                # st.session_state["cv_text"] = cv_text
+                # st.session_state["requirements_input"] = requirements_input
 
             except Exception as e:
                 st.error(f"Error extracting requirements: {e}")
         else:
             st.error("Please upload both the CV and the requirements matrix files.")
 
-    if "requirements_input" in st.session_state and st.button("Confirm and Fill Requirements Matrix"):
+
+    # Display extracted requirements for user confirmation or modification
+    st.subheader("Extracted Requirements:")
+    requirements_input = st.text_area(
+        "Please confirm or modify the extracted requirements: (editing this doesn't currently work due to some bug..)",
+        value=formatted_requirements,
+        height=300,
+        key="keyRequirementsInput",
+    )
+
+    if st.button("Confirm and Fill Requirements Matrix"):
         try:
             # Get confirmed/modified requirements
-            confirmed_requirements = st.session_state["requirements_input"]
-            cv_text = st.session_state["cv_text"]
+            # confirmed_requirements = st.session_state["requirements_input"]
+            confirmed_requirements = requirements_input
+            # cv_text = st.session_state["cv_text"]
+            # Extract text from CV PDF
+            cv_text = document_utils.extract_text_from_pdf(cv_file)
+
+            st.text(confirmed_requirements)
 
             # Combine all requirements into one prompt
             combined_requirements = f"{user_prompt}\n\n{confirmed_requirements}"
