@@ -1,6 +1,8 @@
 # Summarizer
 
-Describe your project here.
+Summarizers for:
+1. Summarizing job listings
+2. Summarizing experience extracted from CVs to fill "komeptanse matriser"
 
 
 ## Setup
@@ -12,3 +14,8 @@ Describe your project here.
 - Verify you can build the Dockerfile
     - ``docker build .``
     - ``docker build -t summarizer:latest .``
+- To run streamlit apps
+    - ``streamlit run src/summarizer/apps/streamlit_app.py``
+    - ``streamlit run src/summarizer/apps/streamlit_matrices_app.py``
+- To run fastapi apps
+    - ``uvicorn src.summarizer.apps.fastapi_app:app --reload``
