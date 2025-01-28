@@ -31,4 +31,3 @@ example-pkg = "summarizer:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-

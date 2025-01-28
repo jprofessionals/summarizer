@@ -19,19 +19,21 @@ dict_roles = {
         "og verktøy som kreves for rollen, samt en kort beskrivelse av arbeidsoppgavene og "
         "viktige høydepunkter slik at utviklerene kan vurdere om utlysningen virker interessant. "
         "Jobb annonsen: \n\n"
-    )
-    }
+    ),
+}
 
 # Intialize the OpenAI client
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
+
 def summarize_text_with_openai(
-        text: str, 
-        system_prompt: str = dict_roles["system"], 
-        user_prompt: str = dict_roles["user"], 
-        max_tokens: int = 1000) -> str:
+    text: str,
+    system_prompt: str = dict_roles["system"],
+    user_prompt: str = dict_roles["user"],
+    max_tokens: int = 1000,
+) -> str:
     """
     Summarizes a given text using OpenAI's GPT-4 API.
 
@@ -73,5 +75,5 @@ def summarize_text_with_openai(
         summary = response.choices[0].message.content
     except Exception as e:
         raise ValueError(f"Error summarizing text with OpenAI: {e}")
-    
+
     return summary

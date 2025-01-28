@@ -2,8 +2,10 @@ import streamlit as st
 from summarizer import document_utils
 from summarizer.summarizers import matrices
 import docx
+from typing import Dict, List
 
-def extract_requirements_from_docx(docx_file) -> dict:
+
+def extract_requirements_from_docx(docx_file) -> Dict[str, List[str]]:
     """
     Extracts matrix-like data from the requirements DOCX file.
 
@@ -13,7 +15,7 @@ def extract_requirements_from_docx(docx_file) -> dict:
     Returns:
         dict: A dictionary of requirements extracted from the DOCX file.
     """
-    requirements = {}
+    requirements: Dict[str, List[str]] = {}
     doc = docx.Document(docx_file)
     for table in doc.tables:
         headers = [cell.text.strip() for cell in table.rows[0].cells]
@@ -27,6 +29,7 @@ def extract_requirements_from_docx(docx_file) -> dict:
                         requirements[key] = []
                     requirements[key].append(value)
     return requirements
+
 
 def format_requirements_for_display(requirements_dict: dict) -> str:
     """
@@ -46,12 +49,13 @@ def format_requirements_for_display(requirements_dict: dict) -> str:
             counter += 1
     return "\n".join(formatted_requirements)
 
+
 def main() -> None:
     """
     Main function of the Streamlit app for filling out requirements matrices.
     """
     st.set_page_config(
-        page_title="Requirements Matrix Filler", 
+        page_title="Requirements Matrix Filler",
         # layout="wide"
     )
 
@@ -59,27 +63,19 @@ def main() -> None:
 
     # Text input for system and user prompts
     system_prompt = st.text_area(
-        "System Prompt",
-        value=matrices.dict_roles["system"],
-        height=150
+        "System Prompt", value=matrices.dict_roles["system"], height=150
     )
 
     user_prompt = st.text_area(
-        "User Prompt",
-        value=matrices.dict_roles["user"],
-        height=150
+        "User Prompt", value=matrices.dict_roles["user"], height=150
     )
 
     # File upload for CV (PDF)
-    cv_file = st.file_uploader(
-        "Upload Consultant's CV (PDF)",
-        type=["pdf"]
-    )
+    cv_file = st.file_uploader("Upload Consultant's CV (PDF)", type=["pdf"])
 
     # File upload for requirements matrix (DOCX)
     requirements_file = st.file_uploader(
-        "Upload Requirements Matrix (DOCX)",
-        type=["docx"]
+        "Upload Requirements Matrix (DOCX)", type=["docx"]
     )
 
     if st.button("Extract Requirements"):
@@ -92,14 +88,16 @@ def main() -> None:
                 requirements_dict = extract_requirements_from_docx(requirements_file)
 
                 # Format extracted requirements for display
-                formatted_requirements = format_requirements_for_display(requirements_dict)
+                formatted_requirements = format_requirements_for_display(
+                    requirements_dict
+                )
 
                 # Display extracted requirements for user confirmation or modification
                 st.subheader("Extracted Requirements:")
                 requirements_input = st.text_area(
                     "Please confirm or modify the extracted requirements:",
                     value=formatted_requirements,
-                    height=300
+                    height=300,
                 )
 
                 # Store the extracted requirements and CV text in session state
@@ -111,7 +109,9 @@ def main() -> None:
         else:
             st.error("Please upload both the CV and the requirements matrix files.")
 
-    if "requirements_input" in st.session_state and st.button("Confirm and Fill Requirements Matrix"):
+    if "requirements_input" in st.session_state and st.button(
+        "Confirm and Fill Requirements Matrix"
+    ):
         try:
             # Get confirmed/modified requirements
             confirmed_requirements = st.session_state.get("requirements_input", "")
@@ -133,13 +133,14 @@ def main() -> None:
                     cv=cv_text,
                     requirement=combined_requirements,
                     system_prompt=system_prompt,
-                    user_prompt=user_prompt
+                    user_prompt=user_prompt,
                 )
 
             st.subheader("Filled Requirements Matrix:")
             st.text_area("Filled Requirements", value=filled_response, height=300)
         except Exception as e:
             st.error(f"Error filling requirements matrix: {e}")
+
 
 if __name__ == "__main__":
     main()

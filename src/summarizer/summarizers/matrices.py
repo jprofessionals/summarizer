@@ -18,7 +18,7 @@ dict_roles = {
         "For hvert punkt gi en beskrivelse av hvor godt konsulenten oppfyller dette kravet, prosjekter og resultater som støtter opp om kompetansen. "
         # "Hopp over de første punktene om personalia og annen generell administrativ informasjon som navn, kontaktinformasjon, timepris, etc. "
         "\n\n"
-    )
+    ),
 }
 
 # Initialize the OpenAI client
@@ -26,12 +26,14 @@ client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
+
 def fill_requirement_with_openai(
-        cv: str,
-        requirement: str,
-        system_prompt: str = dict_roles["system"],
-        user_prompt: str = dict_roles["user"],
-        max_tokens: int = 5000) -> str:
+    cv: str,
+    requirement: str,
+    system_prompt: str = dict_roles["system"],
+    user_prompt: str = dict_roles["user"],
+    max_tokens: int = 5000,
+) -> str:
     """
     Fills out a single requirement based on a consultant's CV.
 
@@ -51,7 +53,10 @@ def fill_requirement_with_openai(
             model="o1",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"{user_prompt}CV:\n\n{cv}\n\nKrav:\n\n{requirement}"}
+                {
+                    "role": "user",
+                    "content": f"{user_prompt}CV:\n\n{cv}\n\nKrav:\n\n{requirement}",
+                },
             ],
             max_completion_tokens=max_tokens,
         )

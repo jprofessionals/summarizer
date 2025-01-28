@@ -31,7 +31,7 @@ resource "azurerm_app_service" "example" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     DOCKER_REGISTRY_SERVER_URL          = "https://myContainerRegistry.azurecr.io"
     DOCKER_REGISTRY_SERVER_USERNAME     = "myContainerRegistry"
-    DOCKER_REGISTRY_SERVER_PASSWORD     = "your_acr_password"
+    DOCKER_REGISTRY_SERVER_PASSWORD     = "your_acr_password" #pragma: allowlist secret
   }
 }
 
