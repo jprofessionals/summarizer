@@ -1,5 +1,5 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from typing import List
 from summarizer import document_utils
 from summarizer.summarizers import joblistings
@@ -21,6 +21,14 @@ async def health_check() -> JSONResponse:
     Health check endpoint to verify that the API is running.
     """
     return JSONResponse(content={"status": "ok"})
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> FileResponse:
+    """
+    Serve the favicon.
+    """
+    return FileResponse("favicon.ico")
 
 
 def handle_text_extraction_from_files(files: List[UploadFile]) -> str:
