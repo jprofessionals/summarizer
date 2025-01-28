@@ -8,14 +8,15 @@ load_dotenv()
 # The roles for the OpenAI chat API
 dict_roles = {
     "system": (
-        "Du er en intelligent assistent som spesialiserer deg i å analysere CV-er og fylle ut kravmatriser for konsulenter. "
-        "Du skal evaluere en konsulents erfaringer og resultater mot en spesifikk kravmatrise. "
-        "Bruk informasjon fra CV-en til å beskrive konsulentens styrker og erfaringer for hvert krav i matrisen. "
+        "Du er en intelligent assistent som spesialiserer deg i å analysere CV-er og fylle ut krav lister for konsulenter. "
+        "Du skal evaluere en konsulents erfaringer og resultater mot de spesifikke kravene. "
+        "Bruk informasjon fra CV-en til å beskrive konsulentens styrker og erfaringer for hvert krav. "
         "Fyll ut matrisen på en strukturert måte, med konkrete eksempler fra CV-en."
     ),
     "user": (
-        "Basert på CV-en nedenfor og kravmatrisen som følger, analyser hvor godt konsulenten oppfyller hvert krav. "
-        "For hvert punkt i matrisen gi en beskrivelse av hvor godt konsulenten oppfyller dette kravet, prosjekter og resultater som støtter opp om kompetansen. "
+        "Basert på CV-en og kravmatrisen som følger, analyser hvor godt konsulenten oppfyller hvert krav. "
+        "For hvert punkt gi en beskrivelse av hvor godt konsulenten oppfyller dette kravet, prosjekter og resultater som støtter opp om kompetansen. "
+        # "Hopp over de første punktene om personalia og annen generell administrativ informasjon som navn, kontaktinformasjon, timepris, etc. "
         "\n\n"
     )
 }
@@ -30,7 +31,7 @@ def fill_requirement_with_openai(
         requirement: str,
         system_prompt: str = dict_roles["system"],
         user_prompt: str = dict_roles["user"],
-        max_tokens: int = 2000) -> str:
+        max_tokens: int = 5000) -> str:
     """
     Fills out a single requirement based on a consultant's CV.
 

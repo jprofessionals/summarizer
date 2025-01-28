@@ -113,24 +113,23 @@ def main() -> None:
 
     if "requirements_input" in st.session_state and st.button("Confirm and Fill Requirements Matrix"):
         try:
-            # Convert confirmed/modified requirements to a list
-            confirmed_requirements = st.session_state["requirements_input"].splitlines()
+            # Get confirmed/modified requirements
+            confirmed_requirements = st.session_state["requirements_input"]
             cv_text = st.session_state["cv_text"]
 
-            filled_matrix = {}
+            # Combine all requirements into one prompt
+            combined_requirements = f"{user_prompt}\n\n{confirmed_requirements}"
+
             with st.spinner("Filling requirements matrix..."):
-                for requirement in confirmed_requirements:
-                    if requirement.strip():
-                        filled_response = matrices.fill_requirement_with_openai(
-                            cv=cv_text,
-                            requirement=requirement,
-                            system_prompt=system_prompt,
-                            user_prompt=user_prompt
-                        )
-                        filled_matrix[requirement] = filled_response
+                filled_response = matrices.fill_requirement_with_openai(
+                    cv=cv_text,
+                    requirement=combined_requirements,
+                    system_prompt=system_prompt,
+                    user_prompt=user_prompt
+                )
 
             st.subheader("Filled Requirements Matrix:")
-            st.json(filled_matrix)
+            st.text_area("Filled Requirements", value=filled_response, height=300)
         except Exception as e:
             st.error(f"Error filling requirements matrix: {e}")
 
