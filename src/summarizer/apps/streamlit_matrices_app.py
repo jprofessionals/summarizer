@@ -13,7 +13,7 @@ def extract_requirements_from_docx(docx_file) -> Dict[str, List[str]]:
         docx_file (file-like object): The DOCX file to extract requirements from.
 
     Returns:
-        dict: A dictionary of requirements extracted from the DOCX file.
+        Dict[str, List[str]]: A dictionary of requirements extracted from the DOCX file.
     """
     requirements: Dict[str, List[str]] = {}
     doc = docx.Document(docx_file)
@@ -31,12 +31,12 @@ def extract_requirements_from_docx(docx_file) -> Dict[str, List[str]]:
     return requirements
 
 
-def format_requirements_for_display(requirements_dict: dict) -> str:
+def format_requirements_for_display(requirements_dict: Dict[str, List[str]]) -> str:
     """
     Formats the requirements dictionary for display, adding numbering for each line.
 
     Args:
-        requirements_dict (dict): The dictionary of requirements.
+        requirements_dict (Dict[str, List[str]]): The dictionary of requirements.
 
     Returns:
         str: The formatted string of requirements.
@@ -123,7 +123,7 @@ def main() -> None:
             if confirmed_requirements == "":
                 st.error("Please confirm or modify the extracted requirements.")
                 return
-            st.write("Doing stuff..")
+            st.write("Filling these requirements..")
 
             # Combine all requirements into one prompt
             combined_requirements = f"{user_prompt}\n\n{confirmed_requirements}"
