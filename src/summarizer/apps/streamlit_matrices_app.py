@@ -2,6 +2,22 @@ import streamlit as st
 from summarizer import document_utils
 from summarizer.summarizers import matrices
 
+def extract_requirements_from_docx(docx_text: str) -> list:
+    """
+    Extracts matrix-like data from the requirements DOCX text.
+
+    Args:
+        docx_text (str): The text extracted from the DOCX file.
+
+    Returns:
+        list: A list of requirements extracted from the DOCX text.
+    """
+    requirements = []
+    for line in docx_text.splitlines():
+        if ":" in line:  # Simple heuristic to identify matrix-like data
+            requirements.append(line.strip())
+    return requirements
+
 def main() -> None:
     """
     Main function of the Streamlit app for filling out requirements matrices.
@@ -47,23 +63,35 @@ def main() -> None:
                 # Extract text from requirements DOCX
                 requirements_text = document_utils.extract_text_from_docx(requirements_file)
 
-                # Convert requirements text to a list of requirements
-                requirements = requirements_text.splitlines()
+                # Extract matrix-like data from requirements text
+                requirements = extract_requirements_from_docx(requirements_text)
 
-                filled_matrix = {}
-                with st.spinner("Filling requirements matrix..."):
-                    for requirement in requirements:
-                        if requirement.strip():
-                            filled_response = matrices.fill_requirement_with_openai(
-                                cv=cv_text,
-                                requirement=requirement,
-                                system_prompt=system_prompt,
-                                user_prompt=user_prompt
-                            )
-                            filled_matrix[requirement] = filled_response
+                # Display extracted requirements for user confirmation or modification
+                st.subheader("Extracted Requirements:")
+                requirements_input = st.text_area(
+                    "Please confirm or modify the extracted requirements:",
+                    value="\n".join(requirements),
+                    height=300
+                )
 
-                st.subheader("Filled Requirements Matrix:")
-                st.json(filled_matrix)
+                if st.button("Confirm and Fill Requirements Matrix"):
+                    # Convert confirmed/modified requirements to a list
+                    confirmed_requirements = requirements_input.splitlines()
+
+                    filled_matrix = {}
+                    with st.spinner("Filling requirements matrix..."):
+                        for requirement in confirmed_requirements:
+                            if requirement.strip():
+                                filled_response = matrices.fill_requirement_with_openai(
+                                    cv=cv_text,
+                                    requirement=requirement,
+                                    system_prompt=system_prompt,
+                                    user_prompt=user_prompt
+                                )
+                                filled_matrix[requirement] = filled_response
+
+                    st.subheader("Filled Requirements Matrix:")
+                    st.json(filled_matrix)
             except Exception as e:
                 st.error(f"Error filling requirements matrix: {e}")
         else:
