@@ -20,46 +20,40 @@ dict_roles = {
     )
 }
 
-# Intialize the OpenAI client
+# Initialize the OpenAI client
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
-def fill_requirements_matrix_with_openai(
+def fill_requirement_with_openai(
         cv: str,
-        requirements: str,
+        requirement: str,
         system_prompt: str = dict_roles["system"],
         user_prompt: str = dict_roles["user"],
-        max_tokens: int = 2000) -> dict:
+        max_tokens: int = 2000) -> str:
     """
-    Fills out a requirements matrix based on a consultant's CV.
+    Fills out a single requirement based on a consultant's CV.
 
     Args:
         cv (str): The consultant's CV as a text string.
-        requirements (dict): A dictionary representing the requirements matrix.
+        requirement (str): A single requirement to be fulfilled.
         max_tokens (int): Maximum tokens for the response.
 
     Returns:
-        dict: The filled requirements matrix.
+        str: The response for the requirement.
     """
     try:
-        # Format requirements into a readable prompt
-        # requirements_text = "\n".join([f"{key}: {value}" for key, value in requirements.items()])
-        requirements_text = requirements
-
         # Create the OpenAI chat input
         response = client.chat.completions.create(
-            # model="gpt-4",
             model="o1",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"{user_prompt}CV:\n\n{cv}\n\nKravmatrise:\n\n{requirements_text}"}
+                {"role": "user", "content": f"{user_prompt}CV:\n\n{cv}\n\nKrav:\n\n{requirement}"}
             ],
             max_completion_tokens=max_tokens,
         )
-        # Parse the response into a dictionary format (or keep it as text)
-        filled_matrix = response.choices[0].message.content
+        # Parse the response
+        filled_requirement = response.choices[0].message.content
+        return filled_requirement
     except Exception as e:
-        raise ValueError(f"Error processing requirements matrix: {e}")
-    
-    return filled_matrix
+        raise ValueError(f"Error generating response for requirement: {e}")

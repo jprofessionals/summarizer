@@ -1,27 +1,6 @@
 import streamlit as st
-import json
 from summarizer import document_utils
 from summarizer.summarizers import matrices
-
-def parse_requirements_text(requirements_text: str) -> dict:
-    """
-    Parses the requirements text into a dictionary, skipping lines that cannot be converted.
-
-    Args:
-        requirements_text (str): The requirements text.
-
-    Returns:
-        dict: The parsed requirements dictionary.
-    """
-    requirements = {}
-    for line in requirements_text.splitlines():
-        try:
-            key, value = line.split(":", 1)
-            requirements[key.strip()] = value.strip()
-        except ValueError:
-            # Skip lines that cannot be split into key-value pairs
-            continue
-    return requirements
 
 def main() -> None:
     """
@@ -68,20 +47,23 @@ def main() -> None:
                 # Extract text from requirements DOCX
                 requirements_text = document_utils.extract_text_from_docx(requirements_file)
 
-                # Convert requirements text to dictionary
-                # requirements = parse_requirements_text(requirements_text)
-                requirements = requirements_text
+                # Convert requirements text to a list of requirements
+                requirements = requirements_text.splitlines()
 
+                filled_matrix = {}
                 with st.spinner("Filling requirements matrix..."):
-                    filled_matrix = matrices.fill_requirements_matrix_with_openai(
-                        cv=cv_text,
-                        requirements=requirements,
-                        system_prompt=system_prompt,
-                        user_prompt=user_prompt
-                    )
+                    for requirement in requirements:
+                        if requirement.strip():
+                            filled_response = matrices.fill_requirement_with_openai(
+                                cv=cv_text,
+                                requirement=requirement,
+                                system_prompt=system_prompt,
+                                user_prompt=user_prompt
+                            )
+                            filled_matrix[requirement] = filled_response
+
                 st.subheader("Filled Requirements Matrix:")
-                st.text_area("Suggested text", value=filled_matrix, height=300)
-                # st.json(filled_matrix)
+                st.json(filled_matrix)
             except Exception as e:
                 st.error(f"Error filling requirements matrix: {e}")
         else:
