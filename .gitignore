@@ -16,3 +16,4 @@ Todo.md
 .env
 local_test**.py
 local**.md
+/local/*

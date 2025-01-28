@@ -22,7 +22,7 @@ dict_roles = {
     )
     }
 
-# Retrieve the API key
+# Intialize the OpenAI client
 client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
@@ -31,7 +31,7 @@ def summarize_text_with_openai(
         text: str, 
         system_prompt: str = dict_roles["system"], 
         user_prompt: str = dict_roles["user"], 
-        max_tokens: int = 700) -> str:
+        max_tokens: int = 1000) -> str:
     """
     Summarizes a given text using OpenAI's GPT-4 API.
 

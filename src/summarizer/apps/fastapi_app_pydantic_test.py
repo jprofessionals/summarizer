@@ -1,10 +1,18 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from typing import List
 from summarizer import document_utils
 from summarizer.summarizers import joblistings
 
 app = FastAPI()
+
+class SummarizeRequest(BaseModel):
+    system_prompt: str = joblistings.dict_roles["system"]
+    user_prompt: str = joblistings.dict_roles["user"]
+
+class SummarizeResponse(BaseModel):
+    summary: str
 
 @app.get("/")
 def read_root() -> dict:
@@ -51,31 +59,29 @@ def handle_text_extraction_from_files(files: List[UploadFile]) -> str:
     
     return all_text
 
-@app.post("/summarize/")
+@app.post("/summarize/", response_model=SummarizeResponse)
 async def summarize_files(
     files: List[UploadFile] = File(...),
-    system_prompt: str = joblistings.dict_roles["system"],
-    user_prompt: str = joblistings.dict_roles["user"]
-) -> JSONResponse:
+    request: SummarizeRequest = SummarizeRequest()
+) -> SummarizeResponse:
     """
     Endpoint to summarize the text extracted from the uploaded files.
 
     Args:
         files (List[UploadFile]): The uploaded files.
-        system_prompt (str): The system prompt for the OpenAI API.
-        user_prompt (str): The user prompt for the OpenAI API.
+        request (SummarizeRequest): The request containing system and user prompts.
 
     Returns:
-        JSONResponse: The summary of the text.
+        SummarizeResponse: The summary of the text.
     """
     all_text = handle_text_extraction_from_files(files)
 
     try:
-        summary = joblistings.summarize_text_with_openai(all_text, system_prompt, user_prompt)
+        summary = joblistings.summarize_text_with_openai(all_text, request.system_prompt, request.user_prompt)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating summary: {e}")
 
-    return JSONResponse(content={"summary": summary})
+    return SummarizeResponse(summary=summary)
 
 # To run the FastAPI app, use the following command:
 # uvicorn src.summarizer.apps.fastapi_app:app --reload
