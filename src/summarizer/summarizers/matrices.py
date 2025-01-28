@@ -38,6 +38,8 @@ def fill_requirement_with_openai(
     Args:
         cv (str): The consultant's CV as a text string.
         requirement (str): A single requirement to be fulfilled.
+        system_prompt (str): The system prompt for the OpenAI API.
+        user_prompt (str): The user prompt for the OpenAI API.
         max_tokens (int): Maximum tokens for the response.
 
     Returns:
