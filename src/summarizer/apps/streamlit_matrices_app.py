@@ -1,21 +1,28 @@
 import streamlit as st
 from summarizer import document_utils
 from summarizer.summarizers import matrices
+import docx
 
-def extract_requirements_from_docx(docx_text: str) -> list:
+def extract_requirements_from_docx(docx_file) -> list:
     """
-    Extracts matrix-like data from the requirements DOCX text.
+    Extracts matrix-like data from the requirements DOCX file.
 
     Args:
-        docx_text (str): The text extracted from the DOCX file.
+        docx_file (file-like object): The DOCX file to extract requirements from.
 
     Returns:
-        list: A list of requirements extracted from the DOCX text.
+        list: A list of requirements extracted from the DOCX file.
     """
     requirements = []
-    for line in docx_text.splitlines():
-        if ":" in line:  # Simple heuristic to identify matrix-like data
-            requirements.append(line.strip())
+    doc = docx.Document(docx_file)
+    for table in doc.tables:
+        for row in table.rows:
+            cells = row.cells
+            if len(cells) >= 2:
+                key = cells[0].text.strip()
+                value = cells[1].text.strip()
+                if key and value:
+                    requirements.append(f"{key}: {value}")
     return requirements
 
 def main() -> None:
@@ -60,11 +67,8 @@ def main() -> None:
                 # Extract text from CV PDF
                 cv_text = document_utils.extract_text_from_pdf(cv_file)
 
-                # Extract text from requirements DOCX
-                requirements_text = document_utils.extract_text_from_docx(requirements_file)
-
-                # Extract matrix-like data from requirements text
-                requirements = extract_requirements_from_docx(requirements_text)
+                # Extract matrix-like data from requirements DOCX
+                requirements = extract_requirements_from_docx(requirements_file)
 
                 # Display extracted requirements for user confirmation or modification
                 st.subheader("Extracted Requirements:")
