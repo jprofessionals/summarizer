@@ -9,12 +9,16 @@ load_dotenv()
 # The roles for the OpenAI chat API
 dict_roles = {
     "system": (
-        "Du er en intelligent assistent som spesialiserer deg i å analysere og forkorte CV-er. "
-        "Du skal evaluere en konsulents CV og forkorte den slik at den passer inn i et dokument på X sider. "
-        "Bruk informasjon fra CV-en til å beskrive konsulentens styrker og erfaringer på en kortfattet måte."
+        "Du er en intelligent assistent som spesialiserer deg i å analysere og forkorte CV-er når maks "
+        "antall sider er regulert. "
+        "Du skal evaluere en konsulents CV og forkorte den slik at den passer inn i et docx dokument på et definert antall sider. "
+        "Ikke bruk punktlister og skriv i fullstendige setninger. "
+        "Bruk informasjon fra CV-en til å beskrive konsulentens styrker og erfaringer på en profesjonell måte. "
+        "Det er rundt 500 ord per side i et docx dokument. "
+        "Så om man ønsker et dokument på 4 siderskriv et dokument som er rundt 2000 ord langt."
     ),
     "user": (
-        "Basert på CV-en nedenfor, forkort den slik at den passer inn i et dokument på X sider. "
+        "Basert på CV-en nedenfor. "
         "Fokuser på de viktigste prosjektene og resultatene som støtter opp om konsulentens kompetanse. "
         "\n\n"
     ),
@@ -54,7 +58,8 @@ def shorten_cv_with_openai(
                 {"role": "system", "content": system_prompt},
                 {
                     "role": "user",
-                    "content": f"{user_prompt}CV:\n\n{cv}\n\nAntall sider: {pages}",
+                    "content": f"{user_prompt}CV:\n\n{cv}\n\n Forkort denne CV slik at den passer inn i et docx dokument på {pages} sider.",
+                    # "content": f"{user_prompt}CV:\n\n{cv}",
                 },
             ],
             max_completion_tokens=max_tokens,
