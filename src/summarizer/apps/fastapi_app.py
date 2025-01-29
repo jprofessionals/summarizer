@@ -1,7 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from typing import List
-from pydantic import BaseModel
 from summarizer import document_utils
 from summarizer.summarizers import joblistings, matrices, cv_adjuster
 
@@ -104,38 +103,75 @@ async def summarize_files(
     return JSONResponse(content={"summary": summary})
 
 
-class FillRequirementsRequest(BaseModel):
-    cv: str
-    requirements: List[str]
+# class FillRequirementsResponse(BaseModel):
+#     filled_requirements: dict
 
 
-class FillRequirementsResponse(BaseModel):
-    filled_requirements: dict
-
-
-@app.post("/fill_requirements/", response_model=FillRequirementsResponse)
+@app.post("/fill_requirements/")
 async def fill_requirements(
-    request: FillRequirementsRequest,
-) -> FillRequirementsResponse:
+    cv_file: UploadFile = File(...),
+    requirements_file: UploadFile = File(...),
+    system_prompt: str = matrices.dict_roles["system"],
+    user_prompt: str = matrices.dict_roles["user"],
+) -> JSONResponse:
     """
     Endpoint to fill out requirements based on a consultant's CV.
 
     Args:
-        request (FillRequirementsRequest): The request containing the CV and the list of requirements.
+        cv_file (UploadFile): The uploaded CV file (PDF).
+        requirements_file (UploadFile): The uploaded requirements file (DOCX).
 
     Returns:
         FillRequirementsResponse: The filled requirements.
     """
     try:
-        filled_requirements = {}
-        for requirement in request.requirements:
-            filled_requirements[requirement] = matrices.fill_requirement_with_openai(
-                cv=request.cv,
-                requirement=requirement,
-                system_prompt=matrices.dict_roles["system"],
-                user_prompt=matrices.dict_roles["user"],
+        if cv_file.content_type != "application/pdf":
+            raise HTTPException(status_code=400, detail="CV file must be a PDF.")
+        if (
+            requirements_file.content_type
+            != "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ):
+            raise HTTPException(
+                status_code=400, detail="Requirements file must be a DOCX."
             )
-        return FillRequirementsResponse(filled_requirements=filled_requirements)
+
+        cv_text = document_utils.extract_text_from_pdf(cv_file.file)
+        # requirements_text = document_utils.extract_text_from_docx(requirements_file.file)
+
+        # Extract matrix-like data from requirements DOCX
+        requirements_dict = document_utils.extract_requirements_from_docx(
+            requirements_file.file
+        )
+
+        # Format extracted requirements for display
+        requirements_text = document_utils.format_requirements_for_display(
+            requirements_dict
+        )
+
+        print(requirements_text)
+
+        # # Combine all requirements into one prompt
+        #     combined_requirements = f"{user_prompt}\n\n{confirmed_requirements}"
+
+        filled_response = matrices.fill_requirement_with_openai(
+            cv=cv_text,
+            requirement=requirements_text,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+        )
+
+        # requirements_list = requirements_text.split("\n")  # Assuming each requirement is on a new line
+
+        # filled_requirements = {}
+        # for requirement in requirements_list:
+        #     filled_requirements[requirement] = matrices.fill_requirement_with_openai(
+        #         cv=cv_text,
+        #         requirement=requirement,
+        #         system_prompt=matrices.dict_roles["system"],
+        #         user_prompt=matrices.dict_roles["user"],
+        #     )
+        # return FillRequirementsResponse(filled_requirements=filled_requirements)
+        return JSONResponse(content={"filled_response": filled_response})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error filling requirements: {e}")
 
