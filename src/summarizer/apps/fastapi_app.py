@@ -1,8 +1,9 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from typing import List
+from pydantic import BaseModel
 from summarizer import document_utils
-from summarizer.summarizers import joblistings
+from summarizer.summarizers import joblistings, matrices, cv_adjuster
 
 app = FastAPI()
 
@@ -28,7 +29,7 @@ async def favicon() -> FileResponse:
     """
     Serve the favicon.
     """
-    return FileResponse("favicon.ico")
+    return FileResponse("static/favicon.ico")
 
 
 def handle_text_extraction_from_files(files: List[UploadFile]) -> str:
@@ -101,6 +102,68 @@ async def summarize_files(
         raise HTTPException(status_code=500, detail=f"Error generating summary: {e}")
 
     return JSONResponse(content={"summary": summary})
+
+
+class FillRequirementsRequest(BaseModel):
+    cv: str
+    requirements: List[str]
+
+
+class FillRequirementsResponse(BaseModel):
+    filled_requirements: dict
+
+
+@app.post("/fill_requirements/", response_model=FillRequirementsResponse)
+async def fill_requirements(
+    request: FillRequirementsRequest,
+) -> FillRequirementsResponse:
+    """
+    Endpoint to fill out requirements based on a consultant's CV.
+
+    Args:
+        request (FillRequirementsRequest): The request containing the CV and the list of requirements.
+
+    Returns:
+        FillRequirementsResponse: The filled requirements.
+    """
+    try:
+        filled_requirements = {}
+        for requirement in request.requirements:
+            filled_requirements[requirement] = matrices.fill_requirement_with_openai(
+                cv=request.cv,
+                requirement=requirement,
+                system_prompt=matrices.dict_roles["system"],
+                user_prompt=matrices.dict_roles["user"],
+            )
+        return FillRequirementsResponse(filled_requirements=filled_requirements)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error filling requirements: {e}")
+
+
+@app.post("/shorten_cv/")
+async def shorten_cv(
+    files: List[UploadFile] = File(...), pages: int = 1
+) -> JSONResponse:
+    """
+    Endpoint to shorten the CV to fit a specified number of pages.
+
+    Args:
+        files (List[UploadFile]): The uploaded files.
+        pages (int): The number of pages the CV should be shortened to.
+
+    Returns:
+        JSONResponse: The shortened CV.
+    """
+    all_text = handle_text_extraction_from_files(files)
+
+    try:
+        shortened_cv = cv_adjuster.shorten_cv_with_openai(cv=all_text, pages=pages)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error generating shortened CV: {e}"
+        )
+
+    return JSONResponse(content={"shortened_cv": shortened_cv})
 
 
 # To run the FastAPI app, use the following command:
