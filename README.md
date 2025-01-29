@@ -14,6 +14,8 @@ Summarizers for:
 - Verify you can build the Dockerfile
     - ``docker build .``
     - ``docker build -t summarizer:latest .``
+    - To run this locally for testing
+        - ``docker run -d -p 80:80 summarizer-app``
 - To run streamlit apps
     - ``streamlit run src/summarizer/apps/streamlit_app.py``
     - ``streamlit run src/summarizer/apps/streamlit_matrices_app.py``
