@@ -57,7 +57,7 @@ def shorten_cv_with_openai(
                     "content": f"{user_prompt}CV:\n\n{cv}\n\nAntall sider: {pages}",
                 },
             ],
-            max_tokens=max_tokens,
+            max_completion_tokens=max_tokens,
         )
         # Parse the response
         shortened_cv = response.choices[0].message.content
