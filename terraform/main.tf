@@ -24,6 +24,26 @@ resource "azurerm_container_registry" "summarizer" {
   admin_enabled       = true
 }
 
+resource "azurerm_key_vault" "summarizer" {
+  name                        = "jprosummarizerkv"
+  location                    = azurerm_resource_group.summarizer.location
+  resource_group_name         = azurerm_resource_group.summarizer.name
+  sku_name                    = "standard"
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  soft_delete_retention_days  = 7
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = local.current_user_id
+  }
+}
+
+resource "azurerm_key_vault_secret" "openai_api_key" {
+  name         = "OpenAI-API-Key"
+  value        = local.envs["OPENAI_API_KEY"]
+  key_vault_id = azurerm_key_vault.summarizer.id
+}
+
 resource "azurerm_container_group" "summarizer" {
   name                = "jpro-summarizer-container-group"
   location            = azurerm_resource_group.summarizer.location
@@ -59,26 +79,6 @@ resource "azurerm_container_group" "summarizer" {
   tags = {
     environment = "testing"
   }
-}
-
-resource "azurerm_key_vault" "summarizer" {
-  name                        = "jprosummarizerkv"
-  location                    = azurerm_resource_group.summarizer.location
-  resource_group_name         = azurerm_resource_group.summarizer.name
-  sku_name                    = "standard"
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days  = 7
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = local.current_user_id
-  }
-}
-
-resource "azurerm_key_vault_secret" "openai_api_key" {
-  name         = "OpenAI-API-Key"
-  value        = local.envs["OPENAI_API_KEY"]
-  key_vault_id = azurerm_key_vault.summarizer.id
 }
 
 //  terraform init --upgrade
