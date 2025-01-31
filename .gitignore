@@ -17,3 +17,4 @@ Todo.md
 local_test**.py
 local**.md
 /local/*
+terraform/tfplan
