@@ -2,12 +2,13 @@ import streamlit as st
 from summarizer import document_utils
 from summarizer.summarizers import joblistings
 
+
 def main() -> None:
     """
     Main function of the Streamlit app.
     """
     st.set_page_config(
-        page_title="Job Listing Summarizer", 
+        page_title="Job Listing Summarizer",
         # layout="wide"
     )
 
@@ -15,22 +16,18 @@ def main() -> None:
 
     # Text input for system and user prompts
     system_prompt = st.text_area(
-        "System Prompt",
-        value=joblistings.dict_roles["system"],
-        height=150
+        "System Prompt", value=joblistings.dict_roles["system"], height=150
     )
 
     user_prompt = st.text_area(
-        "User Prompt",
-        value=joblistings.dict_roles["user"],
-        height=150
+        "User Prompt", value=joblistings.dict_roles["user"], height=150
     )
 
     # File upload
     uploaded_files = st.file_uploader(
         "Upload job listing documents (PDF, DOCX, or TXT)",
         type=["pdf", "docx", "txt"],
-        accept_multiple_files=True
+        accept_multiple_files=True,
     )
 
     if uploaded_files:
@@ -61,13 +58,18 @@ def main() -> None:
             if st.button("Summarize"):
                 with st.spinner("Generating summary..."):
                     try:
-                        summary = joblistings.summarize_text_with_openai(all_text, system_prompt, user_prompt)
+                        summary = joblistings.summarize_text_with_openai(
+                            all_text, system_prompt, user_prompt
+                        )
                         st.subheader("Summary:")
                         st.write(summary)
                     except Exception as e:
                         st.error(f"Error generating summary: {e}")
         else:
-            st.error("Unable to extract text from the documents. Please try other files.")
+            st.error(
+                "Unable to extract text from the documents. Please try other files."
+            )
+
 
 if __name__ == "__main__":
     main()
