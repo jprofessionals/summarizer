@@ -56,6 +56,18 @@ resource "azurerm_key_vault_secret" "openai_api_key" {
   key_vault_id = azurerm_key_vault.summarizer.id
 }
 
+output "acr_login_server" {
+  value = azurerm_container_registry.summarizer.login_server
+}
+
+output "acr_admin_username" {
+  value = azurerm_container_registry.summarizer.admin_username
+}
+
+output "acr_admin_password" {
+  value = azurerm_container_registry.summarizer.admin_password
+  sensitive = true
+}
 
 //  terraform init --upgrade
 //  terraform plan -out=tfplan

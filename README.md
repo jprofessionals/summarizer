@@ -21,3 +21,23 @@ Summarizers for:
     - ``streamlit run src/summarizer/apps/streamlit_matrices_app.py``
 - To run fastapi apps
     - ``uvicorn src.summarizer.apps.fastapi_app:app --reload``
+
+
+### Build infra structure
+```
+terraform init --upgrade
+terraform plan -out=tfplan
+terraform apply tfplan
+//  terraform destroy
+```
+
+### Build initial docker image and send it to the Container registry
+```
+<!-- ACR_LOGIN_SERVER=$(terraform output -raw acr_login_server) -->
+ACR_LOGIN_SERVER=$(terraform -chdir=terraform output -raw acr_login_server)
+<!-- echo $ACR_LOGIN_SERVER -->
+docker build -t ${ACR_LOGIN_SERVER}/summarizer-app:latest .
+<!-- az acr login --name $(echo ${ACR_LOGIN_SERVER} | cut -d'.' -f1) -->
+az acr login --name $(echo ${ACR_LOGIN_SERVER})
+docker push ${ACR_LOGIN_SERVER}/summarizer-app:latest
+```
