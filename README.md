@@ -3,6 +3,7 @@
 Summarizers for:
 1. Summarizing job listings
 2. Summarizing experience extracted from CVs to fill "komeptanse matriser"
+3. Summarizing CVs down to X number of pages - and also specializing into spesific fields.
 
 
 ## Setup
